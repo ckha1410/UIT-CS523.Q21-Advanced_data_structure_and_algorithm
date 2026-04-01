@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ thống quản lý hồ sơ sinh viên</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <style>
+    body {
+      font-family: "Be Vietnam Pro", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, #fde68a 0%, transparent 34%),
+        radial-gradient(circle at 88% 18%, #bfdbfe 0%, transparent 34%),
+        radial-gradient(circle at 20% 85%, #fbcfe8 0%, transparent 36%),
+        linear-gradient(135deg, #fff7ed 0%, #eef2ff 52%, #ecfeff 100%);
+      background-size: 140% 140%;
+      animation: bgFlow 16s ease-in-out infinite;
+      color: #0f172a;
+    }
+    @keyframes bgFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .bg-orb {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(2px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    .bg-orb.one {
+      width: 180px;
+      height: 180px;
+      left: 5%;
+      top: 18%;
+      background: #38bdf8;
+    }
+    .bg-orb.two {
+      width: 220px;
+      height: 220px;
+      right: 8%;
+      top: 28%;
+      background: #f472b6;
+      animation-duration: 14s;
+      animation-delay: 1.5s;
+    }
+    .bg-orb.three {
+      width: 160px;
+      height: 160px;
+      left: 25%;
+      bottom: 6%;
+      background: #22c55e;
+      animation-duration: 10s;
+      animation-delay: .7s;
+    }
+    .bg-wave {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: repeating-linear-gradient(
+        120deg,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 2px,
+        rgba(255,255,255,0) 2px,
+        rgba(255,255,255,0) 22px
+      );
+      animation: waveMove 18s linear infinite;
+    }
+    @keyframes waveMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(120px); }
+    }
+    .bg-ribbon {
+      position: fixed;
+      inset: -15% -10%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.26;
+      background:
+        conic-gradient(from 210deg at 20% 30%, rgba(34,211,238,0.34), rgba(34,211,238,0) 38%),
+        conic-gradient(from 10deg at 78% 42%, rgba(251,146,60,0.30), rgba(251,146,60,0) 42%),
+        conic-gradient(from 140deg at 58% 84%, rgba(59,130,246,0.26), rgba(59,130,246,0) 44%);
+      filter: blur(18px) saturate(115%);
+      animation: ribbonSweep 24s ease-in-out infinite;
+    }
+    .bg-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.16;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.7) 0 0.8px, transparent 1.2px),
+        radial-gradient(circle at 70% 40%, rgba(255,255,255,0.65) 0 0.8px, transparent 1.2px),
+        radial-gradient(circle at 35% 75%, rgba(255,255,255,0.55) 0 0.8px, transparent 1.2px),
+        radial-gradient(circle at 82% 82%, rgba(255,255,255,0.45) 0 0.8px, transparent 1.2px);
+      background-size: 170px 170px, 210px 210px, 240px 240px, 280px 280px;
+      animation: grainPulse 7s ease-in-out infinite;
+    }
+    .bg-spark {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.34) 0 2px, transparent 3px),
+        radial-gradient(circle at 28% 72%, rgba(255,255,255,0.30) 0 2px, transparent 3px),
+        radial-gradient(circle at 63% 24%, rgba(255,255,255,0.32) 0 2px, transparent 3px),
+        radial-gradient(circle at 82% 66%, rgba(255,255,255,0.30) 0 2px, transparent 3px),
+        radial-gradient(circle at 48% 88%, rgba(255,255,255,0.26) 0 2px, transparent 3px);
+      animation: sparkDrift 20s linear infinite;
+    }
+    .bg-glow {
+      position: fixed;
+      width: 55vmax;
+      height: 55vmax;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: screen;
+      opacity: 0.2;
+      background: conic-gradient(from 0deg, #22d3ee, #f59e0b, #34d399, #60a5fa, #22d3ee);
+      filter: blur(24px);
+      animation: glowSpin 22s linear infinite;
+      right: -18vmax;
+      bottom: -18vmax;
+    }
+    @keyframes sparkDrift {
+      0% { transform: translate3d(0, 0, 0); opacity: .35; }
+      50% { transform: translate3d(-18px, 12px, 0); opacity: .55; }
+      100% { transform: translate3d(0, 0, 0); opacity: .35; }
+    }
+    @keyframes glowSpin {
+      from { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.08); }
+      to { transform: rotate(360deg) scale(1); }
+    }
+    @keyframes ribbonSweep {
+      0% { transform: translate3d(-1.5%, 0, 0) rotate(0deg) scale(1); }
+      50% { transform: translate3d(2%, -1.5%, 0) rotate(8deg) scale(1.04); }
+      100% { transform: translate3d(-1.5%, 0, 0) rotate(0deg) scale(1); }
+    }
+    @keyframes grainPulse {
+      0% { opacity: 0.12; transform: translate3d(0, 0, 0); }
+      50% { opacity: 0.2; transform: translate3d(8px, -6px, 0); }
+      100% { opacity: 0.12; transform: translate3d(0, 0, 0); }
+    }
+    @keyframes orbFloat {
+      0% { transform: translateY(0px) translateX(0px) scale(1); }
+      50% { transform: translateY(-24px) translateX(18px) scale(1.08); }
+      100% { transform: translateY(0px) translateX(0px) scale(1); }
+    }
+    .panel {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+    }
+    .slide-in {
+      animation: slideIn .35s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast-enter {
+      animation: toastIn .28s ease;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(18px) scale(0.97); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    .pulse-soft {
+      animation: pulseSoft 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseSoft {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25); }
+      70% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    .tree-level {
+      position: relative;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px dashed #93c5fd;
+      background: #f8fbff;
+      animation: slideIn .4s ease;
+    }
+    .tree-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .tree-node {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 6px 10px;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
+      font-size: 12px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .tree-node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(30, 64, 175, 0.18);
+    }
+    .tree-root ul {
+      padding-top: 22px;
+      position: relative;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: center;
+      width: max-content;
+      margin: 0 auto;
+    }
+    .tree-root li {
+      float: left;
+      text-align: center;
+      list-style-type: none;
+      position: relative;
+      padding: 22px 10px 0 10px;
+      animation: slideIn .45s ease;
+    }
+    .tree-root li::before,
+    .tree-root li::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 50%;
+      border-top: 2px solid #93c5fd;
+      width: 50%;
+      height: 22px;
+    }
+    .tree-root li::after {
+      right: auto;
+      left: 50%;
+      border-left: 2px solid #93c5fd;
+    }
+    .tree-root li:only-child::after,
+    .tree-root li:only-child::before {
+      display: none;
+    }
+    .tree-root li:only-child {
+      padding-top: 0;
+    }
+    .tree-root li:first-child::before,
+    .tree-root li:last-child::after {
+      border: 0 none;
+    }
+    .tree-root li:last-child::before {
+      border-right: 2px solid #93c5fd;
+      border-radius: 0 8px 0 0;
+    }
+    .tree-root li:first-child::after {
+      border-radius: 8px 0 0 0;
+    }
+    .tree-root ul ul::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      border-left: 2px solid #93c5fd;
+      width: 0;
+      height: 22px;
+    }
+    .tree-canvas {
+      overflow: auto;
+      padding-bottom: 8px;
+      border: 1px dashed #bfdbfe;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+    .tree-fit {
+      transform-origin: top center;
+      transition: transform .3s ease;
+      width: max-content;
+      margin: 0 auto;
+    }
+    .toast-progress {
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #14b8a6);
+      animation: toastBar 2s linear forwards;
+      margin-top: 10px;
+    }
+    @keyframes toastBar {
+      from { width: 0%; opacity: .8; }
+      to { width: 100%; opacity: 1; }
+    }
+    .node-key {
+      border-radius: 8px;
+      padding: 2px 8px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+    }
+    .key-highlight {
+      background: #fef08a !important;
+      color: #854d0e !important;
+      border-color: #facc15 !important;
+      animation: keyPop .8s ease;
+    }
+    @keyframes keyPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.13); }
+      100% { transform: scale(1); }
+    }
+    .key-shift-up {
+      background: #dbeafe !important;
+      border-color: #3b82f6 !important;
+      animation: moveUpFlow 1.15s ease;
+    }
+    .key-shift-down {
+      background: #e0f2fe !important;
+      border-color: #0ea5e9 !important;
+      animation: moveDownFlow 1.15s ease;
+    }
+    .key-shift-inserted {
+      background: #fde68a !important;
+      color: #7c2d12 !important;
+      border-color: #f59e0b !important;
+      animation: keyGlow .95s ease;
+    }
+    @keyframes keyGlow {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.0); }
+      45% { transform: scale(1.11); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0.24); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.0); }
+    }
+    @keyframes moveUpFlow {
+      0% { transform: translateY(18px) scale(0.95); opacity: .35; }
+      60% { transform: translateY(-5px) scale(1.06); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    @keyframes moveDownFlow {
+      0% { transform: translateY(-18px) scale(0.95); opacity: .35; }
+      60% { transform: translateY(5px) scale(1.06); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .row-highlight {
+      background: #fef9c3 !important;
+      animation: rowFade 1.4s ease;
+    }
+    @keyframes rowFade {
+      from { box-shadow: inset 0 0 0 999px rgba(250, 204, 21, 0.35); }
+      to { box-shadow: inset 0 0 0 999px rgba(250, 204, 21, 0); }
+    }
+    .movement-item {
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      animation: slideIn .32s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb one"></div>
+  <div class="bg-orb two"></div>
+  <div class="bg-orb three"></div>
+  <div class="bg-wave"></div>
+  <div class="bg-ribbon"></div>
+  <div class="bg-grain"></div>
+  <div class="bg-spark"></div>
+  <div class="bg-glow"></div>
+  <div id="app" class="min-h-screen p-4 md:p-8 relative z-10">
+    <div class="max-w-7xl mx-auto space-y-5">
+      <header class="panel border border-slate-200 rounded-2xl shadow-lg p-5 md:p-6">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+          <div>
+            <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Hệ thống quản lý sinh viên</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold">Trình quản lý hồ sơ sinh viên</h1>
+          </div>
+          <div class="text-sm text-slate-600 space-x-3">
+            <span>Số bản ghi: <strong>{{ students.length }}</strong></span>
+            <span>Cập nhật lúc: <strong>{{ lastRefreshLabel }}</strong></span>
+          </div>
+        </div>
+      </header>
+
+      <section class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <aside class="panel border border-slate-200 rounded-2xl shadow-lg p-5 space-y-4">
+          <h2 class="text-lg font-bold">Thao tác</h2>
+
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Mã sinh viên</label>
+            <input v-model="form.student_id" type="number" min="1" placeholder="Số nguyên dương" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Họ và tên</label>
+            <input v-model="form.name" type="text" placeholder="Nhập họ tên sinh viên" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-sm font-medium">Giới tính</label>
+              <select v-model="form.gender" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                <option value="M">Nam (M)</option>
+                <option value="F">Nữ (F)</option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-medium">GPA</label>
+              <input v-model="form.gpa" type="number" step="0.01" min="0" max="4" placeholder="0.0 đến 4.0" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Ngày sinh</label>
+            <input id="dobPicker" v-model="form.date_of_birth" type="text" placeholder="yyyy-mm-dd" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Số điện thoại</label>
+            <input v-model="form.phone" type="text" placeholder="Nhập số điện thoại" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
+
+          <button @click="addStudent" class="w-full rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2">Thêm sinh viên</button>
+
+          <div class="border-t border-slate-200 pt-4 space-y-3">
+            <div class="flex gap-2">
+              <input v-model="searchId" type="number" min="1" placeholder="Tìm theo mã" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <button @click="findById" class="px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white">Tìm</button>
+            </div>
+            <div class="flex gap-2">
+              <input v-model="searchName" type="text" placeholder="Tìm theo tên" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <button @click="findByName" class="px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white">Tìm</button>
+            </div>
+            <div class="flex gap-2">
+              <input v-model="deleteId" type="number" min="1" placeholder="Xóa theo mã" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-400">
+              <button @click="deleteStudent" class="px-4 rounded-lg bg-rose-600 hover:bg-rose-700 text-white">Xóa</button>
+            </div>
+            <button @click="runSelfCheck" class="w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2">Kiểm tra B-Tree</button>
+          </div>
+
+        </aside>
+
+        <main class="xl:col-span-2 space-y-4">
+          <article id="searchResultCard" class="panel border border-amber-200 rounded-2xl shadow-lg p-4 slide-in">
+            <h3 class="font-bold mb-2">Kết quả tìm kiếm</h3>
+            <p class="text-sm mb-3" :class="searchInfo.ok ? 'text-emerald-700' : 'text-rose-700'">{{ searchInfo.message }}</p>
+
+            <div v-if="searchState.mode === 'single' && searchState.single" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>Mã sinh viên:</strong> {{ searchState.single.student_id }}</div>
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>Họ và tên:</strong> {{ searchState.single.name }}</div>
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>Giới tính:</strong> {{ searchState.single.gender }}</div>
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>Ngày sinh:</strong> {{ searchState.single.date_of_birth }}</div>
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>GPA:</strong> {{ searchState.single.gpa }}</div>
+              <div class="rounded-lg border border-amber-200 bg-amber-50 p-3"><strong>Số điện thoại:</strong> {{ searchState.single.phone }}</div>
+            </div>
+
+            <div v-else-if="searchState.mode === 'list' && searchState.list.length" class="overflow-auto max-h-60 rounded-lg border border-amber-200 bg-white">
+              <table class="min-w-full text-sm">
+                <thead class="bg-amber-100 sticky top-0">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Mã</th>
+                    <th class="px-3 py-2 text-left">Tên</th>
+                    <th class="px-3 py-2 text-left">Giới tính</th>
+                    <th class="px-3 py-2 text-left">Ngày sinh</th>
+                    <th class="px-3 py-2 text-left">GPA</th>
+                    <th class="px-3 py-2 text-left">Số điện thoại</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="s in searchState.list" :key="`search-${s.student_id}`" class="odd:bg-white even:bg-amber-50" :class="highlightStudentId === s.student_id ? 'row-highlight' : ''">
+                    <td class="px-3 py-2">{{ s.student_id }}</td>
+                    <td class="px-3 py-2">{{ s.name }}</td>
+                    <td class="px-3 py-2">{{ s.gender }}</td>
+                    <td class="px-3 py-2">{{ s.date_of_birth }}</td>
+                    <td class="px-3 py-2">{{ s.gpa }}</td>
+                    <td class="px-3 py-2">{{ s.phone }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p v-else class="text-sm text-slate-500">Thực hiện tìm kiếm để xem chi tiết sinh viên.</p>
+          </article>
+
+          <article class="panel border border-slate-200 rounded-2xl shadow-lg p-4 md:p-5">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button @click="activeTab = 'table'" class="px-3 py-2 rounded-lg text-sm font-semibold" :class="activeTab === 'table' ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-700'">Bảng dữ liệu gốc</button>
+              <button @click="activeTab = 'id-tree'" class="px-3 py-2 rounded-lg text-sm font-semibold" :class="activeTab === 'id-tree' ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-700'">Cây chỉ mục theo mã</button>
+              <button @click="activeTab = 'name-tree'" class="px-3 py-2 rounded-lg text-sm font-semibold" :class="activeTab === 'name-tree' ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-700'">Cây chỉ mục theo tên</button>
+            </div>
+
+            <div v-if="activeTab === 'table'" class="overflow-auto max-h-[420px] border border-slate-200 rounded-lg">
+              <table class="min-w-full text-sm">
+                <thead class="bg-slate-100 sticky top-0">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Mã</th>
+                    <th class="px-3 py-2 text-left">Tên</th>
+                    <th class="px-3 py-2 text-left">Giới tính</th>
+                    <th class="px-3 py-2 text-left">Ngày sinh</th>
+                    <th class="px-3 py-2 text-left">GPA</th>
+                    <th class="px-3 py-2 text-left">Số điện thoại</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="s in students" :key="s.student_id" :id="`row-student-${s.student_id}`" class="odd:bg-white even:bg-slate-50 slide-in" :class="highlightStudentId === s.student_id ? 'row-highlight' : ''">
+                    <td class="px-3 py-2">{{ s.student_id }}</td>
+                    <td class="px-3 py-2">{{ s.name }}</td>
+                    <td class="px-3 py-2">{{ s.gender }}</td>
+                    <td class="px-3 py-2">{{ s.date_of_birth }}</td>
+                    <td class="px-3 py-2">{{ s.gpa.toFixed ? s.gpa.toFixed(2) : s.gpa }}</td>
+                    <td class="px-3 py-2">{{ s.phone }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="idTreeTabPanel" v-if="activeTab === 'id-tree'" class="space-y-4">
+              <h3 class="font-bold">Cấu trúc cây B-Tree theo mã sinh viên</h3>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-indigo-100 text-indigo-700 px-3 py-1" v-for="(level, idx) in idIndex.levels" :key="`idlv-${idx}`">Tầng {{ idx }}: {{ level.length }} nút</span>
+              </div>
+              <div v-if="treeAnimation.active" class="text-xs text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2">
+                {{ treeAnimation.message }}
+              </div>
+              <div id="idTreeCanvas" class="tree-canvas">
+                <div class="tree-fit">
+                  <tree-horizontal v-if="displayIdTree" :node="displayIdTree" :highlight-key="highlightIdKey" :movement-map="movementMapId"></tree-horizontal>
+                </div>
+              </div>
+              <div class="text-xs text-slate-500">Tổng số entry chỉ mục: {{ idIndex.entries.length }}</div>
+            </div>
+
+            <div v-if="activeTab === 'name-tree'" class="space-y-4">
+              <h3 class="font-bold">Cấu trúc cây B-Tree theo tên sinh viên</h3>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-fuchsia-100 text-fuchsia-700 px-3 py-1" v-for="(level, idx) in nameIndex.levels" :key="`nlv-${idx}`">Tầng {{ idx }}: {{ level.length }} nút</span>
+              </div>
+              <div class="tree-canvas">
+                <div class="tree-fit">
+                  <tree-horizontal v-if="nameIndex.tree" :node="nameIndex.tree" :highlight-key="highlightNameKey"></tree-horizontal>
+                </div>
+              </div>
+              <div class="text-xs text-slate-500">Tổng số entry chỉ mục: {{ nameIndex.entries.length }}</div>
+            </div>
+          </article>
+
+          <article class="panel border border-indigo-200 rounded-2xl shadow-lg p-4">
+            <h3 class="font-bold mb-2">Biến động cây B-Tree</h3>
+            <div class="text-sm space-y-2">
+              <p><strong>Thao tác gần nhất:</strong> {{ treeChange.action }}</p>
+              <p><strong>Khóa tác động:</strong> {{ treeChange.keyLabel }}</p>
+              <p><strong>Tổng entry (ID):</strong> {{ treeChange.beforeEntries }} -> {{ treeChange.afterEntries }}</p>
+              <p><strong>Chiều cao cây:</strong> {{ treeChange.beforeHeight }} -> {{ treeChange.afterHeight }}</p>
+              <p class="text-slate-600">{{ treeChange.summary }}</p>
+              <div class="pt-2">
+                <p class="font-semibold mb-2">Mô phỏng dịch chuyển khóa:</p>
+                <div v-if="treeChange.movements && treeChange.movements.length" class="space-y-2 max-h-52 overflow-auto pr-1">
+                  <div v-for="(mv, idx) in treeChange.movements" :key="`mv-${idx}-${mv.key}`" class="movement-item">
+                    <p>
+                      <strong>{{ mv.key }}</strong>
+                      <span class="text-slate-700">: {{ mv.description }}</span>
+                    </p>
+                  </div>
+                </div>
+                <p v-else class="text-slate-500">Chưa có thay đổi vị trí khóa để mô phỏng.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel border border-slate-200 rounded-2xl shadow-lg p-4">
+            <h3 class="font-bold mb-2">Kết quả kiểm tra chỉ mục</h3>
+            <div class="text-sm space-y-2">
+              <div class="rounded-lg border p-2" :class="checkResult.id && checkResult.id.ok ? 'border-emerald-200 bg-emerald-50' : 'border-rose-200 bg-rose-50'">
+                <strong>Chỉ mục theo mã:</strong>
+                <span>{{ localizeCheckMessage(checkResult.id ? checkResult.id.message : 'Không có dữ liệu') }}</span>
+              </div>
+              <div class="rounded-lg border p-2" :class="checkResult.name && checkResult.name.ok ? 'border-emerald-200 bg-emerald-50' : 'border-rose-200 bg-rose-50'">
+                <strong>Chỉ mục theo tên:</strong>
+                <span>{{ localizeCheckMessage(checkResult.name ? checkResult.name.message : 'Không có dữ liệu') }}</span>
+              </div>
+            </div>
+          </article>
+        </main>
+      </section>
+    </div>
+
+    <transition name="toast">
+      <div v-if="toast.show" class="fixed right-4 top-4 md:right-6 md:top-6 z-50 w-[92vw] max-w-sm panel border rounded-xl shadow-2xl p-4 toast-enter" :class="toast.ok ? 'border-emerald-300' : 'border-rose-300'">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+          <p class="text-xs uppercase tracking-[0.2em] mb-1" :class="toast.ok ? 'text-emerald-700' : 'text-rose-700'">{{ toast.ok ? 'Thành công' : 'Lỗi' }}</p>
+          <p class="font-semibold text-base">{{ toast.title }}</p>
+          <p class="text-base mt-1 text-slate-700">{{ toast.message }}</p>
+          </div>
+          <button @click="closeToast" class="text-slate-500 hover:text-slate-800 text-lg leading-none">&times;</button>
+        </div>
+          <div class="toast-progress" :style="{ background: toast.ok ? 'linear-gradient(90deg, #22c55e, #14b8a6)' : 'linear-gradient(90deg, #ef4444, #f97316)' }"></div>
+      </div>
+    </transition>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    const TreeHorizontal = {
+      name: "TreeHorizontal",
+      props: {
+        node: { type: Object, required: true },
+        highlightKey: { type: String, default: "" },
+        movementMap: { type: Object, default: () => ({}) },
+      },
+      methods: {
+        formatNodeKey(key) {
+          if (Array.isArray(key) && key.length === 2) {
+            return `${key[0]} | ${key[1]}`;
+          }
+          return String(key);
+        },
+        movementClass(key) {
+          const info = this.movementMap[this.formatNodeKey(key)] || null;
+          if (!info) return "";
+          if (info.type === "moved_up") return "key-shift-up";
+          if (info.type === "moved_down") return "key-shift-down";
+          if (info.type === "inserted") return "key-shift-inserted";
+          return "";
+        },
+      },
+      template: `
+        <div class="tree-root">
+          <ul>
+            <li>
+              <div class="tree-node">
+                <span class="text-slate-500 text-[11px]">Nút</span>
+                <span v-for="(k, idx) in node.keys" :key="idx" class="node-key" :data-tree-key="formatNodeKey(k)" :class="[formatNodeKey(k) === highlightKey ? 'key-highlight' : '', movementClass(k)]">
+                  {{ formatNodeKey(k) }}
+                </span>
+                <span v-if="!node.keys || !node.keys.length" class="node-key">(rỗng)</span>
+              </div>
+              <ul v-if="node.children && node.children.length">
+                <li v-for="(child, cIdx) in node.children" :key="cIdx">
+                  <tree-horizontal :node="child" :highlight-key="highlightKey" :movement-map="movementMap"></tree-horizontal>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      `,
+    };
+
+    createApp({
+      components: { TreeHorizontal },
+      data() {
+        return {
+          students: [],
+          idIndex: { entries: [], levels: [], tree: null },
+          nameIndex: { entries: [], levels: [], tree: null },
+          form: {
+            student_id: "",
+            name: "",
+            gender: "M",
+            date_of_birth: "",
+            gpa: "",
+            phone: "",
+          },
+          searchId: "",
+          searchName: "",
+          deleteId: "",
+          searchState: {
+            mode: "none",
+            single: null,
+            list: [],
+          },
+          searchInfo: {
+            ok: true,
+            message: "Chưa có thao tác tìm kiếm",
+          },
+          checkResult: {},
+          activeTab: "table",
+          lastRefreshLabel: "-",
+          toast: {
+            show: false,
+            ok: true,
+            title: "Thông báo",
+            message: "",
+          },
+          toastTimer: null,
+          highlightIdKey: "",
+          highlightNameKey: "",
+          highlightStudentId: null,
+          treeChange: {
+            action: "Chưa có",
+            keyLabel: "-",
+            beforeEntries: 0,
+            afterEntries: 0,
+            beforeHeight: 0,
+            afterHeight: 0,
+            summary: "Thực hiện thêm/xóa để xem biến động cây.",
+            movements: [],
+          },
+          movementMapId: {},
+          treeAnimation: {
+            active: false,
+            message: "",
+            tree: null,
+          },
+          treeTimerA: null,
+          treeTimerB: null,
+          treeTimerC: null,
+        };
+      },
+      computed: {
+        displayIdTree() {
+          if (this.treeAnimation.active && this.treeAnimation.tree) {
+            return this.treeAnimation.tree;
+          }
+          return this.idIndex.tree;
+        },
+      },
+      methods: {
+        showToast(ok, title, message) {
+          this.toast = {
+            show: true,
+            ok: Boolean(ok),
+            title,
+            message,
+          };
+          if (this.toastTimer) {
+            clearTimeout(this.toastTimer);
+          }
+          this.toastTimer = setTimeout(() => {
+            this.toast.show = false;
+          }, 2000);
+        },
+        closeToast() {
+          this.toast.show = false;
+          if (this.toastTimer) {
+            clearTimeout(this.toastTimer);
+            this.toastTimer = null;
+          }
+        },
+        stopMovementSimulation() {
+          return;
+        },
+        startMovementSimulation(keyLabel, movements) {
+          this.stopMovementSimulation();
+
+          const inserted = (movements || []).find((mv) => mv && mv.type === "inserted" && mv.key);
+          if (inserted) {
+            this.highlightIdKey = String(inserted.key);
+            return;
+          }
+
+          if (keyLabel) {
+            this.highlightIdKey = String(keyLabel);
+          }
+        },
+        clearTreePlayback() {
+          if (this.treeTimerA) {
+            clearTimeout(this.treeTimerA);
+            this.treeTimerA = null;
+          }
+          if (this.treeTimerB) {
+            clearTimeout(this.treeTimerB);
+            this.treeTimerB = null;
+          }
+          if (this.treeTimerC) {
+            clearTimeout(this.treeTimerC);
+            this.treeTimerC = null;
+          }
+          this.treeAnimation.active = false;
+          this.treeAnimation.message = "";
+          this.treeAnimation.tree = null;
+        },
+        cloneTree(node) {
+          if (!node) return null;
+          return JSON.parse(JSON.stringify(node));
+        },
+        removeKeyFromTree(node, keyLabel) {
+          if (!node || !Array.isArray(node.keys)) return;
+          const target = String(keyLabel);
+          node.keys = node.keys.filter((k) => String(k) !== target);
+          if (Array.isArray(node.children)) {
+            node.children.forEach((child) => this.removeKeyFromTree(child, target));
+          }
+        },
+        buildTransitionTree(beforeTree, keyLabel, actionLabel) {
+          const tree = this.cloneTree(beforeTree);
+          if (!tree) return null;
+
+          if (String(actionLabel).includes("Thêm")) {
+            if (!Array.isArray(tree.keys)) tree.keys = [];
+            const exists = tree.keys.some((k) => String(k) === String(keyLabel));
+            if (!exists) {
+              const asNumber = Number(keyLabel);
+              tree.keys.push(Number.isNaN(asNumber) ? String(keyLabel) : asNumber);
+              tree.keys.sort((a, b) => Number(a) - Number(b));
+            }
+          } else if (String(actionLabel).includes("Xóa")) {
+            // Step 2 for delete keeps the key visible so user can follow highlighted key,
+            // final removal is shown at step 3 when rendering the final tree.
+            return tree;
+          }
+          return tree;
+        },
+        playTreeTransition(beforeTree, finalTree, keyLabel, actionLabel) {
+          if (!beforeTree || !finalTree) return;
+
+          this.clearTreePlayback();
+          this.activeTab = "id-tree";
+          this.treeAnimation.active = true;
+          this.treeAnimation.message = "Bước 1/3: Cây trước thay đổi";
+          this.treeAnimation.tree = this.cloneTree(beforeTree);
+          this.centerTreeFrame(String(keyLabel));
+
+          this.treeTimerA = setTimeout(() => {
+            this.treeAnimation.message = `Bước 2/3: ${actionLabel} khóa ${keyLabel}`;
+            this.treeAnimation.tree = this.buildTransitionTree(beforeTree, keyLabel, actionLabel);
+            this.centerTreeFrame(String(keyLabel));
+          }, 2000);
+
+          this.treeTimerB = setTimeout(() => {
+            this.treeAnimation.message = "Bước 3/3: Cây sau cân bằng";
+            this.treeAnimation.tree = this.cloneTree(finalTree);
+            this.centerTreeFrame(String(keyLabel));
+          }, 4000);
+
+          this.treeTimerC = setTimeout(() => {
+            this.clearTreePlayback();
+          }, 6000);
+        },
+        async centerTreeFrame(keyLabel) {
+          await this.$nextTick();
+          const tabPanel = document.getElementById("idTreeTabPanel");
+          if (tabPanel) {
+            tabPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+
+          const canvas = document.getElementById("idTreeCanvas");
+          if (canvas) {
+            if (keyLabel) {
+              const keyNode = canvas.querySelector(`[data-tree-key="${String(keyLabel)}"]`);
+              if (keyNode) {
+                const left = Math.max(0, keyNode.offsetLeft - (canvas.clientWidth / 2) + (keyNode.clientWidth / 2));
+                const top = Math.max(0, keyNode.offsetTop - (canvas.clientHeight / 2) + (keyNode.clientHeight / 2));
+                canvas.scrollTo({ left, top, behavior: "smooth" });
+                return;
+              }
+            }
+
+            const fit = canvas.querySelector(".tree-fit");
+            if (fit) {
+              const centerLeft = Math.max(0, (fit.scrollWidth - canvas.clientWidth) / 2);
+              const centerTop = Math.max(0, (fit.scrollHeight - canvas.clientHeight) / 2);
+              canvas.scrollTo({ left: centerLeft, top: centerTop, behavior: "smooth" });
+            }
+          }
+        },
+        setMovementMap(movements) {
+          const nextMap = {};
+          (movements || []).forEach((mv) => {
+            if (!mv || !mv.key) return;
+            if (mv.type === "removed") return;
+            nextMap[String(mv.key)] = {
+              type: mv.type,
+              from: typeof mv.from === "number" ? mv.from : null,
+              to: typeof mv.to === "number" ? mv.to : null,
+            };
+          });
+          this.movementMapId = nextMap;
+        },
+        async focusSearchResultCard() {
+          await this.$nextTick();
+          const panel = document.getElementById("searchResultCard");
+          if (panel) {
+            panel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        },
+        localizeCheckMessage(message) {
+          const mapper = {
+            valid: "Hợp lệ",
+            "duplicate key detected": "Trùng khóa trong cây",
+            "in-order traversal is not sorted": "Duyệt in-order không đúng thứ tự",
+            "leaves are not at the same depth": "Các lá không cùng một độ sâu",
+            "node keys are not sorted": "Khóa trong nút chưa được sắp xếp",
+          };
+          return mapper[message] || message;
+        },
+        localizeServerMessage(message) {
+          if (!message) return "Thao tác hoàn tất.";
+
+          const raw = String(message);
+          const directMap = {
+            "Student ID already exists": "Mã sinh viên đã tồn tại",
+            "Student not found": "Không tìm thấy sinh viên",
+            "Student added successfully": "Thêm sinh viên thành công",
+            "Student deleted successfully": "Xóa sinh viên thành công",
+          };
+          if (directMap[raw]) return directMap[raw];
+
+          if (raw.startsWith("Added student ") && raw.endsWith(" successfully")) {
+            const id = raw.replace("Added student ", "").replace(" successfully", "");
+            return `Thêm sinh viên ${id} thành công`;
+          }
+
+          if (raw.startsWith("Deleted student ") && raw.endsWith(" successfully")) {
+            const id = raw.replace("Deleted student ", "").replace(" successfully", "");
+            return `Xóa sinh viên ${id} thành công`;
+          }
+
+          if (raw.startsWith("No students found for '")) {
+            const kw = raw.replace("No students found for '", "").replace("'", "");
+            return `Không tìm thấy sinh viên nào với từ khóa '${kw}'`;
+          }
+          if (raw.startsWith("Found ") && raw.includes(" student(s) for '")) {
+            const num = raw.split(" ")[1];
+            const kw = raw.split(" student(s) for '")[1].replace("'", "");
+            return `Tìm thấy ${num} sinh viên với từ khóa '${kw}'`;
+          }
+          if (raw.startsWith("No student found for ID ")) {
+            const id = raw.replace("No student found for ID ", "");
+            return `Không tìm thấy sinh viên có mã ${id}`;
+          }
+          if (raw.startsWith("Found student ID ")) {
+            const id = raw.replace("Found student ID ", "");
+            return `Đã tìm thấy sinh viên có mã ${id}`;
+          }
+          return raw;
+        },
+        makeSnapshot() {
+          return {
+            entries: Array.isArray(this.idIndex.entries) ? this.idIndex.entries.length : 0,
+            height: Array.isArray(this.idIndex.levels) ? this.idIndex.levels.length : 0,
+            keyLevels: this.buildKeyLevelMap(this.idIndex.levels),
+            tree: this.cloneTree(this.idIndex.tree),
+          };
+        },
+        buildKeyLevelMap(levels) {
+          const map = {};
+          if (!Array.isArray(levels)) return map;
+
+          levels.forEach((nodes, levelIdx) => {
+            if (!Array.isArray(nodes)) return;
+            nodes.forEach((nodeKeys) => {
+              if (!Array.isArray(nodeKeys)) return;
+              nodeKeys.forEach((k) => {
+                const label = String(k);
+                map[label] = levelIdx;
+              });
+            });
+          });
+          return map;
+        },
+        updateTreeChange(actionLabel, keyLabel, beforeSnap) {
+          const afterSnap = this.makeSnapshot();
+          const delta = afterSnap.entries - beforeSnap.entries;
+          const heightDelta = afterSnap.height - beforeSnap.height;
+          const beforeLevels = beforeSnap.keyLevels || {};
+          const afterLevels = afterSnap.keyLevels || {};
+          const movedUp = [];
+          const movedDown = [];
+          const inserted = [];
+          const removed = [];
+          const movements = [];
+
+          Object.keys(afterLevels).forEach((k) => {
+            if (!(k in beforeLevels)) {
+              inserted.push(k);
+              return;
+            }
+            if (afterLevels[k] < beforeLevels[k]) movedUp.push(k);
+            if (afterLevels[k] > beforeLevels[k]) movedDown.push(k);
+          });
+          Object.keys(beforeLevels).forEach((k) => {
+            if (!(k in afterLevels)) removed.push(k);
+          });
+
+          let summary = "Cấu trúc cây giữ ổn định.";
+          if (delta > 0) {
+            summary = "Cây nhận thêm khóa mới, số entry tăng.";
+          } else if (delta < 0) {
+            summary = "Khóa đã được xóa, số entry giảm.";
+          }
+          if (heightDelta > 0) {
+            summary += " Chiều cao cây tăng do tách nút.";
+          } else if (heightDelta < 0) {
+            summary += " Chiều cao cây giảm do gom nút.";
+          }
+          if (inserted.length) {
+            summary += ` Khóa mới: ${inserted.slice(0, 4).join(", ")}${inserted.length > 4 ? "..." : ""}.`;
+            inserted.slice(0, 10).forEach((k) => {
+              movements.push({
+                key: k,
+                type: "inserted",
+                from: null,
+                to: afterLevels[k],
+                description: `thêm mới vào cây tại tầng ${afterLevels[k]}`,
+              });
+            });
+          }
+          if (removed.length) {
+            summary += ` Khóa rời khỏi cây: ${removed.slice(0, 4).join(", ")}${removed.length > 4 ? "..." : ""}.`;
+            removed.slice(0, 10).forEach((k) => {
+              movements.push({
+                key: k,
+                type: "removed",
+                from: beforeLevels[k],
+                to: null,
+                description: `bị loại khỏi cây (trước đó ở tầng ${beforeLevels[k]})`,
+              });
+            });
+          }
+          if (movedUp.length) {
+            summary += ` Khóa được đẩy lên tầng trên: ${movedUp.slice(0, 4).join(", ")}${movedUp.length > 4 ? "..." : ""}.`;
+            movedUp.slice(0, 10).forEach((k) => {
+              movements.push({
+                key: k,
+                type: "moved_up",
+                from: beforeLevels[k],
+                to: afterLevels[k],
+                description: `di chuyển lên từ tầng ${beforeLevels[k]} -> tầng ${afterLevels[k]}`,
+              });
+            });
+          }
+          if (movedDown.length) {
+            summary += ` Khóa hạ xuống tầng dưới: ${movedDown.slice(0, 4).join(", ")}${movedDown.length > 4 ? "..." : ""}.`;
+            movedDown.slice(0, 10).forEach((k) => {
+              movements.push({
+                key: k,
+                type: "moved_down",
+                from: beforeLevels[k],
+                to: afterLevels[k],
+                description: `di chuyển xuống từ tầng ${beforeLevels[k]} -> tầng ${afterLevels[k]}`,
+              });
+            });
+          }
+
+          this.treeChange = {
+            action: actionLabel,
+            keyLabel,
+            beforeEntries: beforeSnap.entries,
+            afterEntries: afterSnap.entries,
+            beforeHeight: beforeSnap.height,
+            afterHeight: afterSnap.height,
+            summary,
+            movements,
+          };
+
+          this.setMovementMap(movements);
+          this.startMovementSimulation(keyLabel, movements);
+          this.playTreeTransition(beforeSnap.tree, afterSnap.tree, keyLabel, actionLabel);
+        },
+        async focusChangeLocations(studentId, keyLabel, preferTree = false) {
+          if (preferTree) {
+            this.activeTab = "id-tree";
+            await this.$nextTick();
+            this.centerTreeFrame(String(keyLabel));
+            return;
+          }
+
+          this.activeTab = "table";
+          await this.$nextTick();
+          const row = document.getElementById(`row-student-${studentId}`);
+          if (row) {
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+
+          setTimeout(async () => {
+            this.activeTab = "id-tree";
+            await this.$nextTick();
+            this.centerTreeFrame(String(keyLabel));
+          }, 500);
+        },
+        async api(path, options = {}) {
+          const response = await fetch(path, {
+            headers: { "Content-Type": "application/json" },
+            ...options,
+          });
+          let data = {};
+          try {
+            data = await response.json();
+          } catch {
+            data = { ok: false, message: "Máy chủ trả về dữ liệu không hợp lệ" };
+          }
+          return { response, data };
+        },
+        isValidDate(value) {
+          if (!value) return false;
+          const raw = value.trim();
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return false;
+
+          const parts = raw.split("-");
+          const year = Number(parts[0]);
+          const month = Number(parts[1]);
+          const day = Number(parts[2]);
+
+          const dt = new Date(year, month - 1, day);
+          if (Number.isNaN(dt.getTime())) return false;
+          if (dt.getFullYear() !== year || dt.getMonth() + 1 !== month || dt.getDate() !== day) return false;
+
+          const now = new Date();
+          if (year < 1900 || dt > now) return false;
+
+          return true;
+        },
+        validateAddForm() {
+          const id = Number(this.form.student_id);
+          const gpa = Number(this.form.gpa);
+
+          if (!Number.isInteger(id) || id <= 0) {
+            return "Mã sinh viên phải là số nguyên dương.";
+          }
+          if (!this.form.name.trim()) {
+            return "Tên sinh viên không được để trống.";
+          }
+          if (!["M", "F"].includes(this.form.gender)) {
+            return "Giới tính chỉ được là M hoặc F.";
+          }
+          if (!this.isValidDate(this.form.date_of_birth)) {
+            return "Ngày sinh phải đúng định dạng yyyy-mm-dd và hợp lệ.";
+          }
+          if (Number.isNaN(gpa) || gpa < 0 || gpa > 4) {
+            return "GPA phải nằm trong khoảng 0.0 đến 4.0.";
+          }
+          if (!this.form.phone.trim()) {
+            return "Số điện thoại không được để trống.";
+          }
+          return null;
+        },
+        async refreshAll() {
+          const [studentsRes, idRes, nameRes] = await Promise.all([
+            this.api("/api/students"),
+            this.api("/api/index/id"),
+            this.api("/api/index/name"),
+          ]);
+
+          this.students = Array.isArray(studentsRes.data) ? studentsRes.data : [];
+          this.idIndex = idRes.data || { entries: [], levels: [], tree: null };
+          this.nameIndex = nameRes.data || { entries: [], levels: [], tree: null };
+          this.lastRefreshLabel = new Date().toLocaleTimeString();
+        },
+        async addStudent() {
+          const formError = this.validateAddForm();
+          if (formError) {
+            this.showToast(false, "Thêm sinh viên", formError);
+            return;
+          }
+
+          const beforeSnap = this.makeSnapshot();
+
+          const { response, data } = await this.api("/api/students", {
+            method: "POST",
+            body: JSON.stringify(this.form),
+          });
+
+          this.showToast(response.ok && data.ok, "Thêm sinh viên", this.localizeServerMessage(data.message || "Đã hoàn tất thao tác thêm."));
+          if (response.ok && data.ok) {
+            await this.refreshAll();
+            await this.runSelfCheck(false);
+            this.highlightStudentId = Number(this.form.student_id);
+            this.highlightIdKey = String(this.form.student_id);
+            this.highlightNameKey = `${this.form.name.trim().toLowerCase()} | ${this.form.student_id}`;
+            this.updateTreeChange("Thêm sinh viên", this.highlightIdKey, beforeSnap);
+            this.focusChangeLocations(this.highlightStudentId, this.highlightIdKey);
+          }
+        },
+        async deleteStudent() {
+          const id = Number(this.deleteId);
+          if (!Number.isInteger(id) || id <= 0) {
+            this.showToast(false, "Xóa sinh viên", "Mã cần xóa phải là số nguyên dương.");
+            return;
+          }
+
+          const target = this.students.find((s) => s.student_id === id) || null;
+          const beforeSnap = this.makeSnapshot();
+
+          const { response, data } = await this.api(`/api/students/${id}`, {
+            method: "DELETE",
+          });
+
+          this.deleteId = "";
+
+          this.showToast(response.ok && data.ok, "Xóa sinh viên", this.localizeServerMessage(data.message || "Đã hoàn tất thao tác xóa."));
+          if (response.ok && data.ok) {
+            this.highlightStudentId = id;
+            this.highlightIdKey = String(id);
+            this.highlightNameKey = target ? `${target.name.trim().toLowerCase()} | ${id}` : "";
+            await this.refreshAll();
+            await this.runSelfCheck(false);
+            this.updateTreeChange("Xóa sinh viên", String(id), beforeSnap);
+            this.focusChangeLocations(id, String(id), true);
+          }
+        },
+        async findById() {
+          const id = Number(this.searchId);
+          if (!Number.isInteger(id) || id <= 0) {
+            const msg = "Mã cần tìm phải là số nguyên dương.";
+            this.searchInfo = { ok: false, message: msg };
+            this.showToast(false, "Tìm theo mã", msg);
+            return;
+          }
+
+          const { response, data } = await this.api(`/api/search/id/${id}`);
+          this.searchId = "";
+          this.searchState.mode = "single";
+          this.searchState.single = data.result || null;
+          this.searchState.list = [];
+          this.searchInfo = { ok: response.ok && data.ok, message: this.localizeServerMessage(data.message || "Đã tìm theo mã.") };
+          this.showToast(response.ok && data.ok, "Tìm theo mã", this.searchInfo.message);
+          this.focusSearchResultCard();
+        },
+        async findByName() {
+          const keyword = this.searchName.trim();
+          if (!keyword) {
+            const msg = "Vui lòng nhập từ khóa tên để tìm.";
+            this.searchInfo = { ok: false, message: msg };
+            this.showToast(false, "Tìm theo tên", msg);
+            return;
+          }
+
+          const q = encodeURIComponent(keyword);
+          const { response, data } = await this.api(`/api/search/name?q=${q}`);
+          this.searchName = "";
+          this.searchState.mode = "list";
+          this.searchState.single = null;
+          this.searchState.list = Array.isArray(data.result) ? data.result : [];
+          this.searchInfo = { ok: response.ok && data.ok, message: this.localizeServerMessage(data.message || "Đã tìm theo tên.") };
+          this.showToast(response.ok && data.ok, "Tìm theo tên", this.searchInfo.message);
+          this.focusSearchResultCard();
+        },
+        async runSelfCheck(showToast = true) {
+          const { response, data } = await this.api("/api/self-check");
+          this.checkResult = data || {};
+          const ok = Boolean(data.id?.ok) && Boolean(data.name?.ok);
+          if (showToast) {
+            this.showToast(response.ok && ok, "Kiểm tra B-Tree", ok ? "Cây B-Tree hợp lệ." : "Cây B-Tree có lỗi.");
+          }
+        },
+        initDatePicker() {
+          flatpickr("#dobPicker", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+          });
+        },
+      },
+      async mounted() {
+        this.initDatePicker();
+        await this.refreshAll();
+        await this.runSelfCheck(false);
+      },
+      beforeUnmount() {
+        this.stopMovementSimulation();
+        this.clearTreePlayback();
+      },
+    }).mount("#app");
+  </script>
+</body>
+</html>
